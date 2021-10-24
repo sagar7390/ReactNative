@@ -1,30 +1,30 @@
 import React,{useState} from 'react';
-import {StyleSheet, Text, View, Button, TextInput, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, Button, TextInput, ScrollView, FlatList} from 'react-native';
 
+import GoalItem from './Components/GoalItem';
+import GoalInput from './Components/GoalInput';
 export default function App(){
-    const [enteredGoal,setEnteredGoal] = useState('');
+
     const [courseGoals,setCourseGoals] = useState([]);
-    const goalInputHandler = (enteredGoal) =>{
-        setEnteredGoal(enteredGoal);
+    const [isModalOpen,setIsModalOpen] = useState(false);
+
+    const addGoalHandler = goalTitle =>{
+        setCourseGoals(courseGoals => [...courseGoals,{key : Math.random().toString(), value:goalTitle}]);
     }
-    const addGoalHandler = ()=>{
-        setCourseGoals(courseGoals => [...courseGoals,enteredGoal]);
+
+    const removeGoalHandler = goalId =>{
+        setCourseGoals(CourseGoal => {return CourseGoal.filter((goal) => goal.key!=goalId);})
+
     }
     return (
         <View style={styles.screen}>
-            <View style={styles.inputContainer}>
-                <TextInput placeholder="Enter your Goal"
-                style={styles.input}
-                onChangeText={goalInputHandler}
-                Value={enteredGoal}/>
-                <Button title="Add Goal!" onPress={addGoalHandler}/>
-            </View>
-            <View>
-                <ScrollView>
-                    {courseGoals.map((goal) => <View key={goal} style={styles.listItem}><Text >{goal}</Text></View>)}
-                </ScrollView>
-            </View>
 
+                <GoalInput test={isModalOpen} press={addGoalHandler}/>
+                <FlatList
+                data={courseGoals}
+                renderItem={itemData =>(
+                    <GoalItem title={itemData.item.value} id={itemData.item.key} onDelete={removeGoalHandler}/>
+                )} />
     </View>
     );
 }
@@ -32,23 +32,6 @@ export default function App(){
 const styles =  StyleSheet.create({
     screen :{
     padding : 30
-    },
-    inputContainer : {
-    flexDirection : 'row',
-    justifyContent: 'space-between',
-    alignItems:'center'
-    },
-    input : {
-    borderColor:'black',
-    borderWidth:1,
-     margin :10,
-     width:'60%'
-    },
-    listItem :{
-    padding : 10,
-    backgroundColor : '#ccc',
-    borderColor :'black',
-    borderWidth:1
     }
 
 
